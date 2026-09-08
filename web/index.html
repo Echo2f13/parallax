@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parallax</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <span class="logo">Parallax</span>
+    <span id="header-status" class="header-status"></span>
+  </header>
+
+  <!-- Session list -->
+  <main id="section-sessions">
+    <div class="page-title">
+      <h1>Investigations</h1>
+      <button id="btn-new-session" class="btn btn-primary">+ New</button>
+    </div>
+    <div id="session-list"></div>
+  </main>
+
+  <!-- Create form -->
+  <main id="section-create" hidden>
+    <div class="page-title">
+      <h1>New investigation</h1>
+      <button id="btn-cancel-create" class="btn">Cancel</button>
+    </div>
+    <form id="form-create-session">
+      <div class="field field-full">
+        <label>Objective</label>
+        <textarea name="objective" rows="3" required placeholder="What should the agents investigate?"></textarea>
+      </div>
+      <div class="field">
+        <label>Name <small>(optional)</small></label>
+        <input type="text" name="name" placeholder="Short label" />
+      </div>
+      <div class="field">
+        <label>Agent A</label>
+        <select name="agentAProvider">
+          <option value="manual">Manual relay</option>
+          <option value="browser">ChatGPT browser</option>
+          <option value="openai">OpenAI API</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ollama model</label>
+        <input type="text" name="agentBModel" value="qwen2.5:7b" required />
+      </div>
+      <div class="field">
+        <label>Workspace path</label>
+        <input type="text" name="workspacePath" placeholder="./workspace" />
+      </div>
+      <div class="field">
+        <label>Max iterations</label>
+        <input type="number" name="maxIterations" value="8" min="1" max="50" />
+      </div>
+      <div class="field">
+        <label>Max runtime (s)</label>
+        <input type="number" name="maxRuntimeSeconds" value="1800" min="60" />
+      </div>
+      <div class="field-full actions">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="button" id="btn-cancel-create-2" class="btn">Cancel</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- Session detail -->
+  <main id="section-detail" hidden>
+    <div class="page-title">
+      <button id="btn-back" class="btn">← Back</button>
+      <div class="detail-meta">
+        <span id="detail-title" class="detail-name"></span>
+        <span id="status-badge" class="badge"></span>
+      </div>
+      <div class="detail-actions">
+        <button id="btn-run" class="btn btn-primary" disabled>▶ Run</button>
+        <button id="btn-stop" class="btn btn-danger" disabled>■ Stop</button>
+      </div>
+    </div>
+
+    <div id="detail-info" class="detail-info"></div>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="messages">Messages</button>
+      <button class="tab" data-tab="evidence">Evidence</button>
+      <button class="tab" data-tab="experiments">Experiments</button>
+      <button class="tab" data-tab="hypotheses">Hypotheses</button>
+      <button class="tab" data-tab="report">Report</button>
+    </nav>
+
+    <div id="tab-messages"    class="tab-panel">
+      <div id="message-log"></div>
+    </div>
+    <div id="tab-evidence"    class="tab-panel" hidden>
+      <div id="evidence-list"></div>
+    </div>
+    <div id="tab-experiments" class="tab-panel" hidden>
+      <div id="experiment-list"></div>
+    </div>
+    <div id="tab-hypotheses"  class="tab-panel" hidden>
+      <div id="hypothesis-list"></div>
+    </div>
+    <div id="tab-report"      class="tab-panel" hidden>
+      <div class="export-row">
+        <button id="btn-export-md"   class="btn">↓ Markdown</button>
+        <button id="btn-export-json" class="btn">↓ JSON</button>
+      </div>
+      <div id="report-content"></div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

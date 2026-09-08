@@ -40,4 +40,12 @@ describe('validateAgentResponse', () => {
   it('rejects an invalid recommended action', () => {
     expect(validateAgentResponse({ ...validResult, recommended_next_action: 'WAIT' }).valid).toBe(false)
   })
+
+  it('accepts evidence without a location field', () => {
+    const withoutLocation = {
+      ...validResult,
+      evidence: [{ id: 'ev-1', type: 'observation', description: 'No file path for this one', confidence: 0.7 }],
+    }
+    expect(validateAgentResponse(withoutLocation).valid).toBe(true)
+  })
 })

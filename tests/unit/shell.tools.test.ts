@@ -19,10 +19,20 @@ describe('shell tools', () => {
     expect(result).toMatchObject({ success: false, error: expect.stringContaining('Command not in allowlist') })
   })
 
-  it('rejects forbidden command content', async () => {
+  it('rejects rm as a standalone token', async () => {
     const registry = new ToolRegistry()
     registerShellTools(registry)
     const result = await registry.getTool('run_shell_command').handler({ command: 'rm -rf test' }, { sessionId: 'test', workspacePath: process.cwd() })
     expect(result).toMatchObject({ success: false, error: expect.stringContaining('Forbidden command content') })
+  })
+
+  it('allows npm install with package names containing rm or del', async () => {
+    const registry = new ToolRegistry()
+    registerShellTools(registry)
+    const result = await registry.getTool('run_shell_command').handler(
+      { command: 'echo drizzle-orm' },
+      { sessionId: 'test', workspacePath: process.cwd() },
+    )
+    expect(result.success).toBe(true)
   })
 })

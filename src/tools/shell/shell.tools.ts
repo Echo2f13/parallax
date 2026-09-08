@@ -3,12 +3,18 @@ import { resolve } from 'node:path'
 import { config } from '../../config/config.js'
 import { toolRegistry, type ToolContext, type ToolRegistry, type ToolResult } from '../registry/tool.registry.js'
 
-const forbiddenFragments = ['rm', 'rmdir', 'del', 'rd', 'format', 'DROP', 'DELETE FROM', ':(){:|:&};:']
+const forbiddenTokens = new Set(['rm', 'rmdir', 'del', 'rd', 'format', 'mkfs', 'fdisk', 'dd'])
+const forbiddenSubstrings = ['DROP TABLE', 'DELETE FROM', 'TRUNCATE TABLE', ':(){:|:&};:']
+
+function isForbidden(command: string): boolean {
+  if (forbiddenSubstrings.some(fragment => command.toUpperCase().includes(fragment.toUpperCase()))) return true
+  return command.trim().split(/\s+/).some(token => forbiddenTokens.has(token.toLowerCase()))
+}
 
 function executeCommand(command: string, workingDirectory: string): Promise<{ exit_code: number; stdout: string; stderr: string }> {
   const tokens = command.trim().split(/\s+/)
   const program = tokens[0]?.toLowerCase()
-  if (forbiddenFragments.some(fragment => command.includes(fragment))) {
+  if (isForbidden(command)) {
     return Promise.reject(new Error(`Forbidden command content: ${command}`))
   }
   if (!program || !config.shellCommandAllowlist.some(allowed => allowed === program)) {

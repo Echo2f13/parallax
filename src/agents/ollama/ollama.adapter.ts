@@ -34,6 +34,7 @@ export class OllamaAdapter implements AgentProvider {
     let rawResponse = response.message.content
     let toolCallCount = 0
     while (response.message.tool_calls && response.message.tool_calls.length > 0) {
+      messages.push({ role: 'assistant', content: response.message.content })
       for (const toolCall of response.message.tool_calls) {
         toolCallCount += 1
         if (toolCallCount > 10) throw new Error('OllamaAdapter: maximum tool calls exceeded')
@@ -44,7 +45,6 @@ export class OllamaAdapter implements AgentProvider {
           request.sessionId,
           request.request.task_id,
         )
-        messages.push({ role: 'assistant', content: response.message.content })
         messages.push({ role: 'tool', content: JSON.stringify(result) })
       }
       response = await this.client.chat({ model: request.model ?? this.model, messages, tools: toolRegistry.getToolsForOllama() })

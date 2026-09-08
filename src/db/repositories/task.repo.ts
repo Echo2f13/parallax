@@ -12,3 +12,8 @@ export async function insertTask(data: NewTask): Promise<Task> {
 export async function findTasksBySessionId(sessionId: string): Promise<Task[]> {
   return db.select().from(tasks).where(eq(tasks.sessionId, sessionId)).orderBy(asc(tasks.createdAt))
 }
+
+export async function updateTaskStatus(id: string, status: string): Promise<void> {
+  const updated = await db.update(tasks).set({ status, updatedAt: new Date().toISOString() }).where(eq(tasks.id, id)).returning({ id: tasks.id })
+  if (updated.length === 0) throw new Error('Task not found')
+}

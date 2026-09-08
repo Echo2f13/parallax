@@ -55,7 +55,7 @@ export const observationItemSchema = z.object({
 export const evidenceItemSchema = z.object({
   id: z.string(),
   type: z.string(),
-  location: z.string(),
+  location: z.string().optional(),
   description: z.string(),
   confidence: z.number(),
 })

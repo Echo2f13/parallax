@@ -16,14 +16,17 @@ export const config = {
   maxRuntimeSeconds: parseInt(optionalEnv('MAX_RUNTIME_SECONDS', '1800'), 10),
   maxAgentMessages: parseInt(optionalEnv('MAX_AGENT_MESSAGES', '100'), 10),
   chromeUserDataDir: optionalEnv('CHROME_USER_DATA_DIR', ''),
+  browserChannel: optionalEnv('BROWSER_CHANNEL', 'chrome'),
   chromeProfile: optionalEnv('CHROME_PROFILE', 'Default'),
   chatgptConversationId: optionalEnv('CHATGPT_CONVERSATION_ID', ''),
+  // Execution API (naukri-autoapply separate process)
+  executionApiUrl: optionalEnv('EXECUTION_API_URL', 'http://localhost:4000'),
   shellCommandAllowlist: [
     'npm', 'npx', 'node', 'git', 'tsc', 'tsx',
     'python', 'python3', 'pip', 'pip3',
     'cat', 'ls', 'dir', 'echo', 'type',
     'grep', 'find', 'rg',
   ],
-} as const
+}
 
 export type Config = typeof config

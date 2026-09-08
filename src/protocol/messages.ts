@@ -47,7 +47,7 @@ export interface ObservationItem {
 export interface EvidenceItem {
   id: string
   type: string
-  location: string
+  location?: string
   description: string
   confidence: number
 }

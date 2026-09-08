@@ -1,6 +1,6 @@
 import { eq, asc } from 'drizzle-orm'
 import { db } from '../client.js'
-import { messages, sessions, tasks, toolCalls } from '../schema.js'
+import { contradictions, evidence, experimentResults, experiments, hypotheses, messages, sessions, tasks, toolCalls, unknowns } from '../schema.js'
 import type { NewSession, Session } from '../schema.js'
 
 export async function insertSession(data: NewSession): Promise<Session> {
@@ -35,6 +35,15 @@ export async function updateSessionStatus(id: string, status: string, reason?: s
 export async function deleteSessionById(id: string): Promise<void> {
   const existing = await findSessionById(id)
   if (!existing) throw new Error('Session not found')
+  await db.delete(contradictions).where(eq(contradictions.sessionId, id))
+  await db.delete(unknowns).where(eq(unknowns.sessionId, id))
+  const sessionExperiments = await db.select({ id: experiments.id }).from(experiments).where(eq(experiments.sessionId, id))
+  for (const experiment of sessionExperiments) {
+    await db.delete(experimentResults).where(eq(experimentResults.experimentId, experiment.id))
+  }
+  await db.delete(experiments).where(eq(experiments.sessionId, id))
+  await db.delete(evidence).where(eq(evidence.sessionId, id))
+  await db.delete(hypotheses).where(eq(hypotheses.sessionId, id))
   await db.delete(messages).where(eq(messages.sessionId, id))
   await db.delete(toolCalls).where(eq(toolCalls.sessionId, id))
   await db.delete(tasks).where(eq(tasks.sessionId, id))
